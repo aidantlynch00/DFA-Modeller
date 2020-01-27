@@ -84,7 +84,23 @@ def main():
     accept_states = define_accept_states(states)
     
     m = Machine(states, alphabet, trans_func, start_state, accept_states)
-    print(m)
+    
+    print("Enter commands (help for help, quit to exit): ")
+    while (command := input(" > ")) != "quit":
+        if command == "help":
+            print(" help - prints the help menu")
+            print(" quit - exits the program")
+            print(" run - run a string through the machine")
+            print(" save - save the model")
+        elif command == "run":
+            print("Enter string to test: ")
+            string = input(" > ")
+            result = run(string, m)
+            print(" Machine( " + string + " ) = " + str(result))
+        elif command == "save":
+            pass
+        else:
+            print("Not a valid command (help for help).")
         
     
 
