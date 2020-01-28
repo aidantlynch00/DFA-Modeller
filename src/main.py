@@ -1,6 +1,7 @@
 from machine import Machine, run
 from sys import argv
-from typing import List
+import pickle
+import unicodedata
 
 def gather_states():
     print("Enter label of states (end to stop): ")
@@ -76,34 +77,55 @@ def define_accept_states(states):
 def main():
     if len(argv) != 1:
         print("usage: python main.py")
-    
-    states = gather_states()
-    alphabet = gather_alphabet()
-    trans_func = define_trans_func(states, alphabet)
-    start_state = define_start_state(states)
-    accept_states = define_accept_states(states)
-    
-    m = Machine(states, alphabet, trans_func, start_state, accept_states)
-    
-    print("Enter commands (help for help, quit to exit): ")
-    while (command := input(" > ")) != "quit":
-        if command == "help":
-            print(" help - prints the help menu")
-            print(" quit - exits the program")
-            print(" run - run a string through the machine")
-            print(" save - save the model")
-        elif command == "run":
-            print("Enter string to test: ")
-            string = input(" > ")
-            result = run(string, m)
-            print(" Machine( " + string + " ) = " + str(result))
-        elif command == "save":
-            pass
-        else:
-            print("Not a valid command (help for help).")
         
+    print("Enter new to create a new machine or enter load to load from a .model file: ")
+    while (command := input("  > ")) not in ("new", "load"):
+        print("  Not a valid command. Try again.")
+    
+    
+    m = None
+    if command == "new":
+        states = gather_states()
+        alphabet = gather_alphabet()
+        trans_func = define_trans_func(states, alphabet)
+        start_state = define_start_state(states)
+        accept_states = define_accept_states(states)
+    
+        m = Machine(states, alphabet, trans_func, start_state, accept_states)
+        
+    elif command == "load":
+        print("Enter the .model filename: ")
+        filename = input("  > ")
+        with open(filename + ".model", "rb") as file:
+            m = pickle.load(file)
+            
+    print("Enter commands (help for help, quit to exit): ")
+    while (command := input("  > ")) != "quit":
+        if command == "help":
+            print("  help - prints the help menu")
+            print("  quit - exits the program")
+            print("  run - run a string through the machine")
+            print("  save - save the model")
+        elif command == "run":
+            print("  Enter string to test: ")
+            string = input("  > ")
+            result = run(string, m)
+            
+            if string == "":
+                string = "\xCE"
+            
+            print("    Machine( " + string + " ) = " + str(result))
+        elif command == "save":
+            print("  Enter a filename to save to (exclude any extension): ")
+            filename = input("    > ")
+            with open(filename + ".model", "wb") as file:
+                pickle.dump(m, file)
+        else:
+            print("  Not a valid command (help for help).")
+            
+    
     
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
     
