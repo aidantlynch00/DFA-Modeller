@@ -96,7 +96,7 @@ def main():
     elif command == "load":
         print("Enter the .model filename: ")
         filename = input("  > ")
-        with open(filename + ".model", "rb") as file:
+        with open("models/" + filename + ".model", "rb") as file:
             m = pickle.load(file)
             
     print("Enter commands (help for help, quit to exit): ")
@@ -105,6 +105,7 @@ def main():
             print("  help - prints the help menu")
             print("  quit - exits the program")
             print("  run - run a string through the machine")
+            print("  print - print the tuple represetation of the machine")
             print("  save - save the model")
         elif command == "run":
             print("  Enter string to test: ")
@@ -115,10 +116,16 @@ def main():
                 string = "\xCE"
             
             print("    Machine( " + string + " ) = " + str(result))
+        elif command == "print":
+            print("    M ( " + str(m.states) + 
+                  ",\n        " + str(m.alphabet) + 
+                  ",\n        " + str(m.trans_func) + 
+                  ",\n        " + str(m.start_state) +
+                  ",\n        " + str(m.accept_states) + " )\n")
         elif command == "save":
             print("  Enter a filename to save to (exclude any extension): ")
             filename = input("    > ")
-            with open(filename + ".model", "wb") as file:
+            with open("models/" + filename + ".model", "wb") as file:
                 pickle.dump(m, file)
         else:
             print("  Not a valid command (help for help).")
